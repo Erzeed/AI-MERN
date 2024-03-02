@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
-import { loginValidate, registerValidate, validate } from "../utils/validation";
 import User from "../model/user";
+import { loginValidate, registerValidate, validate } from "../utils/validation";
 import { createToken, veryfyToken } from "../middleware/auth";
+import { authorizationUrl, oauth2Client } from "../utils/googleauth";
+import { google } from "googleapis";
 
 const router = express.Router();
 
@@ -48,6 +49,50 @@ router.post("/login", validate(loginValidate), async (req:Request, resp:Response
             maxAge: 86400000
         })
         return resp.status(200).json({message: "Register Succes"})
+    } catch (error) {
+        console.log(error)
+        return resp.status(500).json({ message: "ERROR", cause: error.message });
+    }
+})
+
+router.get("/google", async (req:Request, resp:Response) => {
+    resp.redirect(authorizationUrl)
+})
+
+router.get("/google/callback", async (req:Request, resp:Response) => {
+    try {
+        const { code } = req.query
+        const { tokens } = await oauth2Client.getToken(code as string);
+        oauth2Client.setCredentials(tokens)
+        const oauth2 = google.oauth2({
+            auth: oauth2Client,
+            version: 'v2'
+        })
+    
+        const { data } = await oauth2.userinfo.get();
+        const { email, name} = data
+        if(!email || !name){
+            return resp.json({
+                data: data,
+            })
+        }
+        let user = await User.findOne({ email })
+        if(!user) {
+            user = new User({
+                firstName: name,
+                lastName: "",
+                email: email
+            })
+            user.save()
+        }
+        
+        const token = createToken(user._id.toString(), user.email, "1d");
+        resp.cookie("auth_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 86400000
+        })
+        return resp.status(200).json(token)
     } catch (error) {
         console.log(error)
         return resp.status(500).json({ message: "ERROR", cause: error.message });

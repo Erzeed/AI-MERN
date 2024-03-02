@@ -18,7 +18,7 @@ app.get('/api/test', async (req: Request, res: Response ) => {
     res.status(200).json({ message: "hello" })
 });
 
-app.use("/api", userRoute)
+app.use("/auth", userRoute)
 
 
 export default app;
