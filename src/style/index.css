@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Kode Mono';
+    src: url("/font/KodeMono-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kode Mono';
+    src: url("/font/KodeMono-Medium.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kode Mono';
+    src: url("/font/KodeMono-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Kode Mono';
+    src: url("/font/KodeMono-SemiBold.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Rajdhani';
+    src: url("/font/Rajdhani-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Kode Mono", monospace;
+}
+
+.kode-mono {
+    font-family: "Kode Mono", monospace;
+}
+
+.rajdhani {
+    font-family: "Rajdhani", sans-serif;
+}
+
+.color-gradient {
+    background-image: linear-gradient(to top, #cc208e 0%, #6713d2 100%);
+}
+
+.color-gradient-parent {
+    background: rgb(0,0,0);
+    background: -moz-radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(63,81,255,1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(63,81,255,1) 100%);
+    background: radial-gradient(circle, rgba(0,0,0,1) 62%, rgba(63,81,255,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#000000",endColorstr="#3f51ff",GradientType=1);
+}
