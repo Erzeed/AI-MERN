@@ -37,6 +37,20 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Rajdhani';
+    src: url("/font/Rajdhani-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Rajdhani';
+    src: url("/font/Rajdhani-SemiBold.ttf") format("truetype");
+    font-weight: 600;
+    font-style: normal;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
