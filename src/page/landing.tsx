@@ -77,7 +77,7 @@ const Landing = () => {
                         options={configAnimation(lottiAI)}
                         height={500}
                         width={500}
-                        speed={.85}
+                        speed={.7}
                     />
                 </div>
             </section>
