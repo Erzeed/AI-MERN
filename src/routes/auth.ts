@@ -38,7 +38,8 @@ router.post("/login", validate(loginValidate), async (req:Request, resp:Response
         if(!user) {
             return resp.status(401).json({message: "Email Not Found"})
         }
-        const isMatch = bcryptjs.compare(user.password, password);
+        const isMatch = await bcryptjs.compare(password, user.password);
+        
         if(!isMatch) {
             return resp.status(403).json({message: "Email or Password is wrong"})
         }
