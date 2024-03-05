@@ -10,20 +10,16 @@ export const createToken = (id: string, email: string, expiresIn: string) => {
 }
 
 export const veryfyToken = (req: Request, resp: Response, next: NextFunction) => {
-    const token = req.signedCookies["auth_token"];
+    const token = req.cookies["auth_token"];
     if(!token) {
         return resp.status(401).json({message: "unAuthorized"})
     }
-    return new Promise<void>((resolve, reject) => {
-        return jwt.verify(token, process.env.JWT_SECRET as string, (err, success) => {
-            if (err) {
-                reject(err.message);
-                return resp.status(401).json({ message: "Token Expired" });
-            } else {
-                resolve();
-                resp.locals.jwtData = success;
-                return next();
-            }
-        });
-    });
+    try {
+        const decode = jwt.verify(token, process.env.JWT_SECRET_KEY as string);
+        req.id = (decode as JwtPayload).id;
+        next()
+    } catch (error) {
+        console.log(error)
+        return resp.status(401).json({message: "unAuthorized"})
+    }
 } 

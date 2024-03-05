@@ -60,9 +60,9 @@ router.get("/google", async (req:Request, resp:Response) => {
     resp.redirect(authorizationUrl)
 })
 
-router.get("/google/callback", async (req:Request, resp:Response) => {
+router.post("/google/callback", async (req:Request, resp:Response) => {
     try {
-        const { code } = req.query
+        const { code } = req.body
         const { tokens } = await oauth2Client.getToken(code as string);
         oauth2Client.setCredentials(tokens)
         const oauth2 = google.oauth2({
@@ -80,8 +80,7 @@ router.get("/google/callback", async (req:Request, resp:Response) => {
         let user = await User.findOne({ email })
         if(!user) {
             user = new User({
-                firstName: name,
-                lastName: "",
+                username: name,
                 email: email
             })
             user.save()
@@ -103,14 +102,14 @@ router.get("/google/callback", async (req:Request, resp:Response) => {
 router.get("/verify-token", veryfyToken, async (req:Request, resp: Response) => {
     try {
         //user token check
-        const user = await User.findById(resp.locals.jwtData.id);
+        const user = await User.findById(req.id);
         if (!user) {
             return resp.status(401).send("User not registered OR Token malfunctioned");
         }
-        if (user._id.toString() !== resp.locals.jwtData.id) {
+        if (user._id.toString() !== req.id) {
             return resp.status(401).send("Permissions didn't match");
         }
-        return resp.status(200).json({ message: "OK", id: user._id, email: user.email });
+        return resp.status(200).json({ message: "OK", id: user._id, email: user.email, username: user.username });
     } catch (error) {
         console.log(error)
         return resp.status(500).json({ message: "ERROR", cause: error.message });

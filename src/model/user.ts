@@ -4,16 +4,14 @@ import bcryptjs from "bcryptjs";
 export type UserType = {
     email: string,
     password: string,
-    firstname: string,
-    lastname: string,
+    username: string,
     groupchat: string[],
 }
 
 const userSchema = new mongoose.Schema<UserType>({
     email: { type: String, required: true, unique: true},
-    password: { type: String, required: true},
-    firstname: { type: String, required: true},
-    lastname: { type: String, required: true},
+    password: { type: String, required: false},
+    username: { type: String, required: true},
     groupchat: [{type: String, required: false}]
 })
 
