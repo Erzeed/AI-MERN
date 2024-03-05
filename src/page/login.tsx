@@ -1,16 +1,26 @@
 import { Formik, Field, ErrorMessage, FormikValues, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { useGoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from "react-icons/fc";
-import { Link } from 'react-router-dom';
-import { useMutation } from 'react-query';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from 'react-query';
 import api from '../utils/api';
+import { toast } from 'react-toastify';
 
 export type formLogin = {
     email: string,
     password: string
 }
 
+export type loginRes = {
+    authuser?: string,
+    code?: string,
+    prompt?: string,
+    scope?: string
+}
 const Login = () => {
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const initialValues: formLogin = {
         email: '',
         password: ''
@@ -24,11 +34,24 @@ const Login = () => {
     });
 
     const mutation = useMutation(api.Login, {
-        onSuccess: () => {
-            console.log("succes")
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken")
+            toast.success("Login berhasil");
+            // navigate("/d")
         },
         onError: (error: Error) => {
-            console.log(error.message)
+            toast.error(error.message);
+        }
+    })
+
+    const mutationLogin = useMutation(api.LoginByGoogle, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken")
+            toast.success("Login berhasil");
+            // navigate("/d")
+        },
+        onError: (error: Error) => {
+            toast.error(error.message);
         }
     })
 
@@ -38,9 +61,15 @@ const Login = () => {
     ) => {
         const data = values as formLogin
         mutation.mutate(data)
-        console.log(data);
         setSubmitting(false);
     };
+
+    const loginByGoogle = useGoogleLogin({
+        onSuccess: codeResponse => {
+            mutationLogin.mutate(codeResponse)
+        },
+        flow: 'auth-code',
+    });
 
     return(
         <div className="login h-[90vh] w-full flex justify-center items-center dark:text-white rajdhani">
@@ -69,7 +98,7 @@ const Login = () => {
                         </form>
                     )}
                 </Formik>
-                <button type="button" className='w-full h-10 text-sm bg-slate-800 font-medium rounded flex justify-center items-center mt-5 tracking-wide'>
+                <button onClick={() => loginByGoogle()} type="button" className='w-full h-10 text-sm bg-slate-800 font-medium rounded flex justify-center items-center mt-5 tracking-wide'>
                     <FcGoogle className='text-3xl pr-2'/>
                     Continue with Google
                 </button>

@@ -1,4 +1,4 @@
-import { formLogin } from "../page/login";
+import { formLogin, loginRes } from "../page/login";
 import { formRegister } from "../page/register";
 
 const api = (() => {
@@ -38,8 +38,27 @@ const api = (() => {
         }
     }
 
+    async function LoginByGoogle (data: loginRes) {
+        const resp = await fetch(`${BASE_URL}/auth/google/callback`, {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        const respJson = await resp.json()
+
+        if (!resp.ok) {
+            throw new Error(respJson.message);
+        }
+
+        return respJson;
+    }
+
     async function validateToken() {
-        const resp = await fetch(`${BASE_URL}/api/auth/verify-token`, {
+        const resp = await fetch(`${BASE_URL}/auth/verify-token`, {
             credentials: "include"
         })
 
@@ -51,7 +70,7 @@ const api = (() => {
     }
 
     async function SignOut() {
-        const resp = await fetch(`${BASE_URL}/api/auth/logout`, {
+        const resp = await fetch(`${BASE_URL}/auth/logout`, {
             method: "POST",
             credentials: "include"
         })
@@ -66,7 +85,8 @@ const api = (() => {
         Register,
         validateToken,
         Login,
-        SignOut
+        SignOut,
+        LoginByGoogle
     }
 })()
 

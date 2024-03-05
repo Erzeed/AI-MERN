@@ -1,10 +1,33 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/ei-icon.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../contexts/auth";
+import { useMutation, useQueryClient } from "react-query";
+import api from "../utils/api";
+import { toast } from "react-toastify";
 
 const Header = () => {
     const [showBackground, setShowBackground] = useState(false);
+    const { isLogin } = useAuthContext()
     const TOP_OFFSET = 100;
+
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    
+    const mutation = useMutation(api.SignOut, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken")
+            toast.success("Sign out succes")
+            navigate("/login")
+        },
+        onError: (error: Error) => {
+            toast.error(error.message)
+        }
+    })
+
+    const onHandleSignOut = () => {
+        mutation.mutate()
+    }
 
     useEffect(() => {
         const handleScroll = () => {
@@ -31,12 +54,20 @@ const Header = () => {
                 <h1 className="md:text-xl text-sm tracking-wide pl-2">Easy Ai</h1>
             </div>
             <div className="space-x-2 hidden md:flex">
-                <div className="btn color-gradient w-24 h-9 rounded-full p-[1px] flex justify-center items-center">
-                    <Link to="/login" className="text-xs bg-black w-full h-full rounded-full flex justify-center items-center">Login</Link>
-                </div>
-                <div className="btn color-gradient w-28 h-9 rounded-full p-[1px] flex justify-center items-center">
-                    <button type="button" className="text-xs color-gradient-parent w-full h-full rounded-full">Get Started</button>
-                </div>
+                { isLogin ? (
+                    <div className="btn color-gradient w-28 h-9 rounded-full p-[1px] flex justify-center items-center">
+                        <button type="button" onClick={onHandleSignOut} className="text-xs color-gradient-parent w-full h-full rounded-full">Sign Out</button>
+                    </div>
+                ): (
+                    <>
+                        <div className="btn color-gradient w-24 h-9 rounded-full p-[1px] flex justify-center items-center">
+                            <Link to="/login" className="text-xs bg-black w-full h-full rounded-full flex justify-center items-center">Login</Link>
+                        </div>
+                        <div className="btn color-gradient w-28 h-9 rounded-full p-[1px] flex justify-center items-center">
+                            <button type="button" className="text-xs color-gradient-parent w-full h-full rounded-full">Get Started</button>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )
