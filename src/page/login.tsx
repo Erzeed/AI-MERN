@@ -37,7 +37,7 @@ const Login = () => {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken")
             toast.success("Login berhasil");
-            // navigate("/d")
+            navigate("/d")
         },
         onError: (error: Error) => {
             toast.error(error.message);
@@ -48,7 +48,7 @@ const Login = () => {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken")
             toast.success("Login berhasil");
-            // navigate("/d")
+            navigate("/d")
         },
         onError: (error: Error) => {
             toast.error(error.message);

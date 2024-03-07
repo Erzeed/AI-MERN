@@ -1,8 +1,10 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,300&family=Rajdhani:wght@300;400;500;600;700&display=swap') */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
+/* @font-face {
     font-family: 'Kode Mono';
     src: url("/font/KodeMono-Bold.ttf") format("truetype");
     font-weight: 700;
@@ -49,7 +51,7 @@
     src: url("/font/Rajdhani-SemiBold.ttf") format("truetype");
     font-weight: 600;
     font-style: normal;
-}
+} */
 
 * {
     box-sizing: border-box;
@@ -67,6 +69,10 @@ body {
 
 .rajdhani {
     font-family: "Rajdhani", sans-serif;
+}
+
+.poppins {
+    font-family: "Poppins", sans-serif;
 }
 
 .color-gradient {
