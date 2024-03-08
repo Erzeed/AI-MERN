@@ -5,20 +5,19 @@ export type groupChatType = {
     userId: string,
     name: string,
     createAt: Date,
-    chat: string[],
+    chat: chatType[],
 }
 
 export type chatType ={
-    id: string,
     role: string,
-    content: string[]
+    content: string
 }
 
 const chatSchema = new mongoose.Schema<chatType>({
-    id:{ type: String, default: randomUUID},
-    role: { type: String, required: true},
-    content: [{type: String, required: false}]
-})
+    role: { type: String, required: true },
+    content: { type: String, required: true }
+});
+
 
 const groupChatSchema = new mongoose.Schema<groupChatType>({
     userId: { type: String, required: true},
@@ -27,6 +26,6 @@ const groupChatSchema = new mongoose.Schema<groupChatType>({
     chat: [chatSchema]
 })
 
-const chat = mongoose.model("Chat", groupChatSchema);
+const ChatProfile = mongoose.model("Chat", groupChatSchema);
 
-export default chat
+export default ChatProfile

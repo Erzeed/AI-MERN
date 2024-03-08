@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import userRoute from "./routes/auth";
+import chatRoute from "./routes/chat";
 import "dotenv/config";
 
 const app = express();
@@ -21,6 +22,7 @@ app.get('/api/test', async (req: Request, res: Response ) => {
 });
 
 app.use("/auth", userRoute)
+app.use("/chat", chatRoute)
 
 
 export default app;

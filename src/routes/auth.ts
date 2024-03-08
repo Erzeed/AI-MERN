@@ -117,11 +117,9 @@ router.get("/verify-token", veryfyToken, async (req:Request, resp: Response) => 
 })
 
 router.post("/logout", veryfyToken, async (req:Request, resp: Response) => {
-    resp.clearCookie("auth_token", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 86400000
-    })
+    resp.cookie("auth_token", "", {
+        expires: new Date(0),
+    });
     return resp.send()
 })
 

@@ -4,15 +4,13 @@ import bcryptjs from "bcryptjs";
 export type UserType = {
     email: string,
     password: string,
-    username: string,
-    groupchat: string[],
+    username: string
 }
 
 const userSchema = new mongoose.Schema<UserType>({
     email: { type: String, required: true, unique: true},
     password: { type: String, required: false},
-    username: { type: String, required: true},
-    groupchat: [{type: String, required: false}]
+    username: { type: String, required: true}
 })
 
 userSchema.pre("save", async function (next) {

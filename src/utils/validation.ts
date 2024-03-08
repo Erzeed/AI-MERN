@@ -18,8 +18,7 @@ export const validate = (validations: ValidationChain[]) => {
 };
 
 export const registerValidate = [
-    check("firstname", "First Name is required").isString(),
-    check("lastname", "Last Name is required").isString(),
+    check("username", "User Name is required").isString(),
     check("email", "Email is required").isEmail(),
     check("password", "Password with 6 or more characters required").isLength({
         min: 6,
@@ -31,3 +30,8 @@ export const loginValidate = [
         min: 6,
     }),
 ]
+
+export const chatCompletionValidator = [
+    check("role").notEmpty().withMessage("Role  is required"),
+    check("content").notEmpty().withMessage("Message  is required"),
+];
