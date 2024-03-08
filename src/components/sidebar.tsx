@@ -14,15 +14,27 @@ const SideBar = () => {
                 <h1 className="text-[15px] tracking-wide pl-2">Easy AI</h1>
             </div>
             <div className="chat-profile poppins tracking-wide text-sm font-light mt-10">
-                <ProfileChat name="Error in react" active={true}  />
-                <ProfileChat name="Multer file upload error" active={false} />
-                <ProfileChat name="Log rotation for disk usageeeeeee" active={false} />
-                <button 
-                    type="button" 
+                <ProfileChat 
+                    id={1}
+                    name="Error in react" 
+                    active={true}  
+                />
+                <ProfileChat
+                    id={2}
+                    name="Multer file upload error" 
+                    active={false} 
+                />
+                <ProfileChat 
+                    id={3}
+                    name="Log rotation for disk usageeeeeee" 
+                    active={false} 
+                />
+                <Link 
+                    to="/d" 
                     className="flex items-center bg-[#282a2c] h-10 text-zinc-300 hover:text-white px-4 rounded-full border-none poppins tracking-wide mt-10 cursor-pointer text-xs font-medium">
                         <TbSquareRoundedPlus className="text-2xl"/>
-                        <p className="pl-2">Tambah obrolan baru</p>
-                </button>
+                        <p className="pl-2">Tambah obrolan</p>
+                </Link>
             </div>
         </div>
     )

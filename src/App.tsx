@@ -6,6 +6,7 @@ import Register from "./page/register"
 import Chat from "./page/chat"
 import Toast from "./components/toast"
 import { useAuthContext } from "./contexts/auth"
+import ChatMessage from "./components/chatMessage"
 
 function App() {
   const { isLogin } = useAuthContext()
@@ -17,7 +18,9 @@ function App() {
         <Route path="/login" element={<Login />}/>
         <Route path="/register" element={<Register />}/>
         {isLogin && (
-          <Route path="/d" element={<Chat />}/>
+          <Route path="/d" element={<Chat />}>
+            <Route path=":idChat" element={<ChatMessage />}/>
+          </Route>
         )}
       </Routes>
       <Toast />

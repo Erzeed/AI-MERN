@@ -2,13 +2,15 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { VscEdit } from "react-icons/vsc";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 type profile = {
     name: string,
-    active: boolean
+    active: boolean,
+    id: number
 }
 
-const ProfileChat = ({name, active}: profile) => {
+const ProfileChat = ({name, active, id }: profile) => {
     const [openPopOver, setOpenPopOver] = useState<boolean>(false)
     const popOverRef = useRef(null);
 
@@ -25,7 +27,7 @@ const ProfileChat = ({name, active}: profile) => {
     }, []);
 
     return(
-        <div ref={popOverRef} className={`${active ? "bg-[#282a2c]" : "hover:bg-[#282a2c] cursor-pointer"} relative profilename h-10 w-full rounded-md flex items-center justify-between px-3 mt-1`}>
+        <Link to={`${id}`} ref={popOverRef} className={`${active ? "bg-[#282a2c]" : "hover:bg-[#282a2c] cursor-pointer"} relative profilename h-10 w-full rounded-md flex items-center justify-between px-3 mt-1`}>
             <p className="max-w-[200px] text-zinc-200 tracking-wide truncate overflow-hidden">{name}</p>
             <button 
                 className="action z-10 w-10 bg-transparent border-none"
@@ -43,7 +45,7 @@ const ProfileChat = ({name, active}: profile) => {
                     <p className="text-xs ml-3">Hapus</p>
                 </div>
             </div>
-        </div>
+        </Link>
     )
 }
 

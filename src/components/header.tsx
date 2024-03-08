@@ -8,15 +8,16 @@ import logo from "../assets/ei-icon.png";
 
 const Header = () => {
     const [showBackground, setShowBackground] = useState(false);
-    const [urlLocation, setUrlLocation] = useState<string>();
+    const [urlLocation, setUrlLocation] = useState<boolean>();
     const { isLogin, setUserData } = useAuthContext()
     const TOP_OFFSET = 100;
     const { pathname } = useLocation()
     const queryClient = useQueryClient();
     const navigate = useNavigate();
-    
+
     useEffect(() => {
-        setUrlLocation(pathname)
+        const chatRoute = pathname.startsWith("/d")
+        setUrlLocation(chatRoute)
     }, [pathname])
 
     const mutation = useMutation(api.SignOut, {
@@ -50,14 +51,14 @@ const Header = () => {
     }, []);
 
     return(
-        <div className={`${urlLocation == "/d" ? "hidden" : `${showBackground && "bg-[#1e1f26]"} sticky z-20 top-0 left-0 flex h-16 md:px-10 px-3 py-4 justify-between dark:text-white`}`}>
+        <div className={`${urlLocation ? "hidden" : `${showBackground && "bg-[#1e1f26]"} sticky z-20 top-0 left-0 flex h-16 md:px-10 px-3 py-4 justify-between dark:text-white`}`}>
             <div className="logo flex h-full items-center">
                 <Link to="/">
                     <img src={logo} className="h-12 w-12 object-cover" />
                 </Link>
                 <h1 className="md:text-xl text-sm tracking-wide pl-2">Easy Ai</h1>
             </div>
-            <div className={`${urlLocation !== "/" ? "md:hidden" : "md:flex"} space-x-2 hidden`}>
+            <div className={`${pathname !== "/" ? "md:hidden" : "md:flex"} space-x-2 hidden`}>
                 { isLogin ? (
                     <>
                         <div className="btn color-gradient w-24 h-9 rounded-full p-[1px] flex justify-center items-center">

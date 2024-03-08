@@ -2,12 +2,11 @@ import SideBar from "../components/sidebar";
 import TextareaAutosize from 'react-textarea-autosize';
 import { useAuthContext } from "../contexts/auth"
 import { IoReturnDownForward } from "react-icons/io5";
-import ChatBuble from "../components/chatBuble";
 import { useEffect, useRef, useState } from "react";
 import NewChatAnimate from "../components/newChatAnimate";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-type message = {
+export type message = {
     role: string,
     message: string
 }
@@ -15,8 +14,9 @@ type message = {
 const Chat = () => {
     const { userData, isLogin } = useAuthContext();
     const [inputPromp, setInputPromp] = useState<string>("")
-    const [chatMessage, setChatMessage] = useState<message[]>([])
+    const [chatMessage, setChatMessage] = useState<message>()
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const params = useParams()
     const navigate = useNavigate()
     console.log(userData)
 
@@ -39,7 +39,7 @@ const Chat = () => {
     const onHandleSubmit = () => {
         if(inputPromp.length >= 2) {
             const newMessage: message = {role: "user", message: inputPromp}
-            setChatMessage((prev) => [...prev, newMessage])
+            setChatMessage(newMessage)
             setInputPromp("")
         }
     }
@@ -50,7 +50,7 @@ const Chat = () => {
             onHandleSubmit();
         }
     };
-    
+
     return(
         <div className="chat flex text-white h-full w-full overflow-hidden">
             <SideBar />
@@ -61,15 +61,10 @@ const Chat = () => {
                     </button>
                 </div>
                 <div ref={chatContainerRef} className="content h-full w-4/5 flex flex-col m-auto overflow-y-scroll">
-                    {chatMessage.length == 0 ? (
+                    {params.idChat == undefined ? (
                         <NewChatAnimate username="Feizal Reza"/>
-                    ) : (
-                        chatMessage.map((chat, index) => (
-                            <ChatBuble 
-                                key={index} 
-                                role={chat.role == "user" ? true:false} message={chat.message}
-                            />
-                        ))
+                    ): (
+                        <Outlet context={chatMessage}/>
                     )}
                 </div>
                 <div className="foot h-28 relative flex flex-col justify-end items-center p-1">

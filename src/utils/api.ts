@@ -1,3 +1,4 @@
+import { messageChat } from "../components/chatMessage";
 import { formLogin, loginRes } from "../page/login";
 import { formRegister } from "../page/register";
 
@@ -80,13 +81,33 @@ const api = (() => {
         }
     }
 
+    async function SendChat(data: messageChat) {
+        const resp = await fetch(`${BASE_URL}/chat/gpt`, {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        const respJson = await resp.json()
+
+        if (!resp.ok) {
+            throw new Error(respJson.message);
+        }
+
+        return respJson
+    }
+
 
     return{
         Register,
         validateToken,
         Login,
         SignOut,
-        LoginByGoogle
+        LoginByGoogle,
+        SendChat
     }
 })()
 
