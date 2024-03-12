@@ -100,6 +100,30 @@ const api = (() => {
         return respJson
     }
 
+    async function profileChat() {
+        const resp = await fetch(`${BASE_URL}/chat/chat-profile`, {
+            credentials: "include"
+        })
+
+        if (!resp.ok) {
+            throw new Error("something is wrong");
+        }
+
+        return resp.json()
+    }
+
+    async function fetchChatById(idProfile: string) {
+        const resp = await fetch(`${BASE_URL}/chat/gpt/${idProfile}`, {
+            credentials: "include"
+        })
+
+        if (!resp.ok) {
+            throw new Error("something is wrong");
+        }
+
+        return resp.json()
+    }
+
 
     return{
         Register,
@@ -107,7 +131,9 @@ const api = (() => {
         Login,
         SignOut,
         LoginByGoogle,
-        SendChat
+        SendChat,
+        profileChat,
+        fetchChatById
     }
 })()
 

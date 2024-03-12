@@ -23,9 +23,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <AuthContextProvider>
           <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
             <App />
-          </GoogleOAuthProvider>;
+          </GoogleOAuthProvider>
         </AuthContextProvider>
       </QueryClientProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  </React.StrictMode>
 )

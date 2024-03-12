@@ -13,9 +13,23 @@ const NewChatAnimate = ({username}: props) => {
         WebkitTextFillColor: 'transparent',
     }
 
+    const getWelcomeText = () => {
+        const hour = new Date().getHours();
+    
+        if (hour >= 5 && hour < 12) {
+            return "Selamat pagi ,";
+        } else if (hour >= 12 && hour < 18) {
+            return "Selamat siang ,";
+        } else if (hour >= 18 && hour < 22) {
+            return "Selamat malam ,";
+        } else {
+            return "Hello ,";
+        }
+    }
+
     return(
-        <div className="welcome text-[56px]">
-            <h1 className="text-zinc-500">Selamat malam,</h1>
+        <div className="welcome text-[56px] w-4/5 mx-auto">
+            <h1 className="text-zinc-500">{getWelcomeText()}</h1>
             <TypeAnimation
                 sequence={[ 1000, `${username}`, 1000, "Apa yang bisa saya bantu ?"]}
                 speed={2}

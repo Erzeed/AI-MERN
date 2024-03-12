@@ -1,49 +1,50 @@
-import { useOutletContext, useParams } from "react-router-dom"
-import { message } from "../page/chat"
+import { useParams } from "react-router-dom"
 import ChatBuble from "../components/chatBuble";
-import { useMutation } from "react-query";
+import { useQuery } from "react-query";
 import api from "../utils/api";
-import { useEffect } from "react";
-
-export type messageChat = {
-    idProfile?: string,
-    role?: string,
-    content?: string
-}
+import { useEffect, useRef } from "react";
+import { useAuthContext } from "../contexts/auth";
+import { message } from "../page/chat";
 
 const ChatMessage = () => {
-    const chatMessage = useOutletContext<message>()
+    const { userData, currentChat, setCurrentChat } = useAuthContext();
+    const chatContainerRef = useRef<HTMLDivElement>(null);
     const { idChat } = useParams()
+    const { username } = userData
 
-    const mutation = useMutation(api.SendChat, {
-        onSuccess: (data) => {
-            console.log("berhasil", data)
-        },
-        onError:(error:Error) => {
-            console.log(error)
+    const { data: dataChat, isLoading, refetch } = useQuery(
+        ["fetchChatById", idChat], () => api.fetchChatById(idChat || ""),
+        {
+            enabled: !!idChat,
         }
-    })
+    );
 
-    const onHandleSendMessage = () => {
-        mutation.mutate({
-            idProfile: undefined,
-            role: chatMessage?.role,
-            content: chatMessage?.message
-        })
-        console.log("haii")
-    }
+    // Scroll to the bottom of the chat container when dataChat changes
+    useEffect(() => {
+        if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
+    }, [dataChat]);
 
     useEffect(() => {
-        onHandleSendMessage();
-    },[chatMessage])
-
-    console.log(chatMessage)
+        refetch()
+        setCurrentChat({})
+    }, [idChat, refetch, setCurrentChat])
 
     return(
-        <div className="w-full h-full">
-            {/* {chatMessage.map((item, index) => (
-                <ChatBuble key={index} role={item.role == "user"} message={item.message}/>
-            ))} */}
+        <div className="w-4/5 h-full overflow-y-scroll m-auto no-scrollbar" ref={chatContainerRef}>
+            {isLoading ? (
+                <p>Loading...</p>
+            ):(
+                dataChat?.chat?.map((item: message) => (
+                    <ChatBuble 
+                        role={item.role == "user"} 
+                        message={item.content} 
+                        username={item.role == "user" ? username : "AI"}
+                        dataCurrentChat={currentChat !== undefined ? currentChat : ""}
+                    />
+                ))
+            )}
         </div>
     )
 }

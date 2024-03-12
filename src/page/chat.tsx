@@ -2,30 +2,35 @@ import SideBar from "../components/sidebar";
 import TextareaAutosize from 'react-textarea-autosize';
 import { useAuthContext } from "../contexts/auth"
 import { IoReturnDownForward } from "react-icons/io5";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import NewChatAnimate from "../components/newChatAnimate";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import api from "../utils/api";
+import { useMutation, useQueryClient } from "react-query";
 
 export type message = {
+    idProfile: string|undefined,
     role: string,
-    message: string
+    content: string
 }
 
 const Chat = () => {
-    const { userData, isLogin } = useAuthContext();
+    const { userData, isLogin, setCurrentChat } = useAuthContext();
     const [inputPromp, setInputPromp] = useState<string>("")
-    const [chatMessage, setChatMessage] = useState<message>()
-    const chatContainerRef = useRef<HTMLDivElement>(null);
-    const params = useParams()
+    const { idChat } = useParams()
     const navigate = useNavigate()
-    console.log(userData)
+    const queryClient = useQueryClient();
+    // console.log(userData);
 
-    useEffect(() => {
-        // Scroll to the bottom of the chat container when chatMessage changes
-        if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    const mutation = useMutation(api.SendChat, {
+        onSuccess: async (data) => {
+            await queryClient.refetchQueries("fetchChatById")
+            setCurrentChat(data?.chat[data.chat.length - 1])
+        },
+        onError:(error:Error) => {
+            console.log(error)
         }
-    }, [chatMessage]);
+    })
 
     useEffect(() => {
         !isLogin && navigate("/login")
@@ -38,8 +43,12 @@ const Chat = () => {
 
     const onHandleSubmit = () => {
         if(inputPromp.length >= 2) {
-            const newMessage: message = {role: "user", message: inputPromp}
-            setChatMessage(newMessage)
+            const newMessage: message = { 
+                idProfile: idChat,
+                role: "user", 
+                content: inputPromp
+            }
+            mutation.mutateAsync(newMessage)
             setInputPromp("")
         }
     }
@@ -54,23 +63,23 @@ const Chat = () => {
     return(
         <div className="chat flex text-white h-full w-full overflow-hidden">
             <SideBar />
-            <div className="content w-full flex flex-col justify-between poppins tracking-wider">
+            <div className="content w-3/4 flex flex-col justify-between poppins tracking-wider px-2">
                 <div className="header flex justify-end h-14 w-full px-4 py-3">
                     <button type="button" className="w-10 h-10 bg-white rounded-full flex justify-center items-center text-black">
                         Rz
                     </button>
                 </div>
-                <div ref={chatContainerRef} className="content h-full w-4/5 flex flex-col m-auto overflow-y-scroll">
-                    {params.idChat == undefined ? (
-                        <NewChatAnimate username="Feizal Reza"/>
+                <div className="content h-full w-full  flex flex-col mb-5 overflow-x-hidden">
+                    {idChat == undefined ? (
+                        <NewChatAnimate username={userData?.username}/>
                     ): (
-                        <Outlet context={chatMessage}/>
+                        <Outlet />
                     )}
                 </div>
-                <div className="foot h-28 relative flex flex-col justify-end items-center p-1">
-                    <div className="prompt relative w-4/5 h-auto ">
+                <div className="foot h-28 relative flex flex-col justify-end items-center p-2">
+                    <div className="prompt relative w-5/6 h-auto ">
                         <TextareaAutosize 
-                            className="w-full text-base tracking-wide text-zinc-300 rounded-lg bg-[#282a2c] border-none focus:outline-none px-4 py-4 resize-none" 
+                            className="w-full text-base tracking-wide text-zinc-300 rounded-lg bg-[#282a2c] border-none focus:outline-none px-4 py-3 resize-none" 
                             maxRows={5}
                             onChange={onHandleChangeInput}
                             onKeyDown={handleKeyDown}
@@ -79,13 +88,13 @@ const Chat = () => {
                         />
                         <button 
                             type="button" 
-                            className="absolute right-5 bottom-[16px] p-2 bg-[#1e1f26] rounded"
+                            className="absolute right-5 bottom-[16px] p-1 bg-[#1e1f26] rounded"
                             onClick={onHandleSubmit}
                         >
                             <IoReturnDownForward className="text-xl font-semibold"/>
                         </button>
                     </div>
-                    <p className="text-xs font-light text-zinc-400 mt-1">Informasi yang diberikan mungkin tidak akurat.</p>
+                    <p className="text-[10px] font-light text-zinc-500 mt-1">Informasi yang diberikan mungkin tidak akurat.</p>
                 </div>
             </div>
         </div>
