@@ -19,3 +19,40 @@ export const cardData= [
         icons: <IoLanguageSharp style={{ fill: "url(#purple-gradient)" }}/>
     },
 ]
+
+export function extractCodeFromString(message: string) {
+    const codeBlockRegex = /```([\w-]+)?\n([\s\S]*?)\n```/g;
+    const messageBlocks = [];
+
+    let match;
+    let lastIndex = 0;
+    while ((match = codeBlockRegex.exec(message)) !== null) {
+        const [, language, code] = match;
+        const textBlock = message.slice(lastIndex, match.index);
+        if (textBlock) {
+        messageBlocks.push({ type: 'text', content: textBlock });
+        }
+        messageBlocks.push({ type: 'code', language, code: code.trim() });
+        lastIndex = match.index + match[0].length;
+    }
+
+    const remainder = message.slice(lastIndex);
+    if (remainder) {
+        messageBlocks.push({ type: 'text', content: remainder });
+    }
+
+    return messageBlocks;
+}
+
+export const configAnimation = (data: object) => {
+    const configLottie = {
+        renderer: "svg",
+        loop: true,
+        autoplay: true,
+        animationData: data,
+        rendererSettings: {
+            preserveAspectRatio: "xMidYMid slice"
+        }
+    }
+    return configLottie
+}

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import logo from "../assets/ei-icon.png";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { coldarkDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useParams } from "react-router-dom";
 import { TypeAnimation } from "react-type-animation";
+import { extractCodeFromString } from "../utils/constant";
+import ChatIsCode from "./chatiscode";
 
 type props = {
     message: string,
@@ -15,35 +15,11 @@ type props = {
     }
 }
 
-function extractCodeFromString(message: string) {
-    const codeBlockRegex = /```([\w-]+)?\n([\s\S]*?)\n```/g;
-    const messageBlocks = [];
-
-    let match;
-    let lastIndex = 0;
-    while ((match = codeBlockRegex.exec(message)) !== null) {
-        const [, language, code] = match;
-        const textBlock = message.slice(lastIndex, match.index);
-        if (textBlock) {
-        messageBlocks.push({ type: 'text', content: textBlock });
-        }
-        messageBlocks.push({ type: 'code', language, code: code.trim() });
-        lastIndex = match.index + match[0].length;
-    }
-
-    const remainder = message.slice(lastIndex);
-    if (remainder) {
-        messageBlocks.push({ type: 'text', content: remainder });
-    }
-
-    return messageBlocks;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
     const messageBlocks = extractCodeFromString(message);
     const widthComponentBuble = useRef<HTMLDivElement>(null);
     const [widtComponent, setWidthComponent] = useState<number>();
+    const width = widthComponentBuble.current?.offsetWidth;
     const { idChat } = useParams();
 
     const renderText = (text:string) => {
@@ -64,10 +40,9 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
         });
     }
 
-    const width = widthComponentBuble.current?.offsetWidth;
     useEffect(() => {
         setWidthComponent(width)
-    }, [idChat]);
+    }, [idChat,width]);
 
     return( 
         <div className={`${ role ? "flex-row-reverse" : ""
@@ -94,41 +69,33 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
                                 />
                             )
                         )}
-                        {messageBlocks &&
-                            messageBlocks.length &&
-                                messageBlocks.map((block, index) =>
+                        {messageBlocks && 
+                            messageBlocks.map((block, index) =>
                                     block.type === 'code' ? (
-                                        <SyntaxHighlighter
-                                            key={index}
-                                            style={coldarkDark}
+                                        <ChatIsCode  
                                             language={block.language}
-                                            customStyle={{
-                                                borderRadius: '7px',
-                                                width: `${widtComponent}px`,
-                                                fontSize: '13px',
-                                                lineHeight: 1.7,
-                                            }}
-                                        >
-                                            {block.code}
-                                        </SyntaxHighlighter>
+                                            code={block.code}
+                                            widtComponent={widtComponent}
+                                            index={index}
+                                        />
                                     ) : (
                                         message !== dataCurrentChat?.content ? (
                                             block.content && renderText(block.content)
                                         ) : (
                                             block.content &&
-                                            renderText(block.content).map((item, itemIndex) => {
-                                                if (item.type === 'span') {
-                                                    return item
-                                                } else {
-                                                return (
-                                                    <TypeAnimation
-                                                        key={itemIndex}
-                                                        sequence={[item]}
-                                                        cursor={false}
-                                                        speed={70}
-                                                    />
-                                                );
-                                            }
+                                                renderText(block.content).map((item, itemIndex) => {
+                                                    if (item.type === 'span') {
+                                                        return item
+                                                    } else {
+                                                    return (
+                                                        <TypeAnimation
+                                                            key={itemIndex}
+                                                            sequence={[`${item}`]}
+                                                            cursor={false}
+                                                            speed={70}
+                                                        />
+                                                    );
+                                                }
                                             })
                                         )
                                 )

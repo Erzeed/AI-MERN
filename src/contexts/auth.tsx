@@ -7,7 +7,9 @@ type authContext = {
     setUserData: Dispatch<React.SetStateAction<string[]>>,
     userData: string[],
     setCurrentChat: Dispatch<React.SetStateAction<string[]>>,
-    currentChat: object | undefined
+    currentChat: object | undefined,
+    loading: boolean,
+    setLoading: Dispatch<React.SetStateAction<boolean>>,
 }
 
 const AuthContext = createContext<authContext | undefined>(undefined);
@@ -15,6 +17,7 @@ const AuthContext = createContext<authContext | undefined>(undefined);
 export const AuthContextProvider = ({children}: {children: React.ReactNode}) => {
     const [userData, setUserData] = useState<string[]>([])
     const [currentChat, setCurrentChat] = useState<object>();
+    const [loading, setLoading] = useState<boolean>(false)
     const { data, isError } = useQuery("validateToken", api.validateToken, {
         retry: false
     })
@@ -29,7 +32,9 @@ export const AuthContextProvider = ({children}: {children: React.ReactNode}) => 
             setUserData,
             userData,
             setCurrentChat,
-            currentChat
+            currentChat,
+            setLoading,
+            loading
         }}>
             {children}
         </AuthContext.Provider>

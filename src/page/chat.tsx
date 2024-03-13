@@ -7,6 +7,7 @@ import NewChatAnimate from "../components/newChatAnimate";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useMutation, useQueryClient } from "react-query";
+import Loading from "../components/loading";
 
 export type message = {
     idProfile: string|undefined,
@@ -15,7 +16,7 @@ export type message = {
 }
 
 const Chat = () => {
-    const { userData, isLogin, setCurrentChat } = useAuthContext();
+    const { userData, isLogin, setCurrentChat, setLoading, Loading } = useAuthContext();
     const [inputPromp, setInputPromp] = useState<string>("")
     const { idChat } = useParams()
     const navigate = useNavigate()
@@ -42,13 +43,14 @@ const Chat = () => {
     }
 
     const onHandleSubmit = () => {
-        if(inputPromp.length >= 2) {
+        if(inputPromp.length >= 2 && Loading !== true) {
             const newMessage: message = { 
                 idProfile: idChat,
                 role: "user", 
                 content: inputPromp
             }
             mutation.mutateAsync(newMessage)
+            setLoading(true)
             setInputPromp("")
         }
     }

@@ -2,22 +2,9 @@ import bg from "../assets/bg-home-1.webp";
 import Lottie from 'react-lottie';
 import lottiAnimation  from "../assets/lotttie.json";
 import lottiAI  from "../assets/Ai.json";
-import { cardData } from "../utils/constant";
+import { cardData, configAnimation } from "../utils/constant";
 
 const Landing = () => {
-
-    const configAnimation = (data: object) => {
-        const configLottie = {
-            renderer: "svg",
-            loop: true,
-            autoplay: true,
-            animationData: data,
-            rendererSettings: {
-                preserveAspectRatio: "xMidYMid slice"
-            }
-        }
-        return configLottie
-    }
 
     return(
         <div className="home w-full dark:text-white md:px-10 px-4">

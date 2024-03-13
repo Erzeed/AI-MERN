@@ -1,13 +1,18 @@
 import { useParams } from "react-router-dom"
-import ChatBuble from "../components/chatBuble";
 import { useQuery } from "react-query";
-import api from "../utils/api";
 import { useEffect, useRef } from "react";
 import { useAuthContext } from "../contexts/auth";
 import { message } from "../page/chat";
+import ChatBuble from "../components/chatBuble";
+import api from "../utils/api";
+import Loading from "./loading";
 
 const ChatMessage = () => {
-    const { userData, currentChat, setCurrentChat } = useAuthContext();
+    const { userData, 
+            currentChat, 
+            setCurrentChat, 
+            setLoading,
+            loading } = useAuthContext();
     const chatContainerRef = useRef<HTMLDivElement>(null);
     const { idChat } = useParams()
     const { username } = userData
@@ -19,12 +24,16 @@ const ChatMessage = () => {
         }
     );
 
+    useEffect(() => {
+        setLoading(false)
+    }, [dataChat, setLoading])
+
     // Scroll to the bottom of the chat container when dataChat changes
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }, [dataChat]);
+    }, [dataChat, loading]);
 
     useEffect(() => {
         refetch()
@@ -34,7 +43,7 @@ const ChatMessage = () => {
     return(
         <div className="w-4/5 h-full overflow-y-scroll m-auto no-scrollbar" ref={chatContainerRef}>
             {isLoading ? (
-                <p>Loading...</p>
+                <Loading />
             ):(
                 dataChat?.chat?.map((item: message) => (
                     <ChatBuble 
@@ -44,6 +53,9 @@ const ChatMessage = () => {
                         dataCurrentChat={currentChat !== undefined ? currentChat : ""}
                     />
                 ))
+            )}
+            {loading && (
+                <Loading />
             )}
         </div>
     )
