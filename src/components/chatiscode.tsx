@@ -11,7 +11,7 @@ type props = {
 const ChatIsCode = ({language, code, index, widtComponent}: props) => {
     
     return(
-        <div className="code bg-zinc-700 p-1 mt-2 rounded">
+        <div className="code bg-zinc-700 p-1 mt-2 rounded overflow-x-hidden">
             <div className="header h-8 flex items-center px-2 text-xs">
                 <p>{language ?? "Code"}</p>
             </div>

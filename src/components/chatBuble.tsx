@@ -39,7 +39,8 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
             }
         });
     }
-
+    
+    console.log(dataCurrentChat)
     useEffect(() => {
         setWidthComponent(width)
     }, [idChat,width]);
@@ -59,14 +60,14 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
                 >
                     <div ref={widthComponentBuble} className="text-sm font-light whitespace-pre-line leading-relaxed text-zinc-300 w-full">
                         {!messageBlocks && (
-                            message !== dataCurrentChat?.content ? (
-                                message
-                            ) : (
+                            message === dataCurrentChat?.content ? (
                                 <TypeAnimation
                                     sequence={[message]}
                                     cursor={false}
                                     speed={70}
                                 />
+                            ) : (
+                                message
                             )
                         )}
                         {messageBlocks && 

@@ -7,7 +7,6 @@ import NewChatAnimate from "../components/newChatAnimate";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useMutation, useQueryClient } from "react-query";
-import Loading from "../components/loading";
 
 export type message = {
     idProfile: string|undefined,
@@ -16,22 +15,46 @@ export type message = {
 }
 
 const Chat = () => {
-    const { userData, isLogin, setCurrentChat, setLoading, Loading } = useAuthContext();
+    const { userData, 
+            isLogin, 
+            setCurrentChat, 
+            setLoading, 
+            Loading} = useAuthContext();
     const [inputPromp, setInputPromp] = useState<string>("")
+    const [isNewProfile, setIsNewProfile] = useState<boolean>(false)
     const { idChat } = useParams()
-    const navigate = useNavigate()
     const queryClient = useQueryClient();
-    // console.log(userData);
-
+    const navigate = useNavigate()
+    
     const mutation = useMutation(api.SendChat, {
         onSuccess: async (data) => {
             await queryClient.refetchQueries("fetchChatById")
-            setCurrentChat(data?.chat[data.chat.length - 1])
+            onHanldeSetCurrentChat(data?.chat)
+            checkIfNewProfile()
         },
         onError:(error:Error) => {
             console.log(error)
         }
     })
+
+    const onHanldeSetCurrentChat = (chat: object[]) => {
+        console.log(chat)
+        setCurrentChat({
+            isnew: chat.length <= 2 ? true : false,
+            ...chat[chat.length - 1]
+        })
+    }
+
+    const checkIfNewProfile = async () => {
+        if(!idChat) {
+            await queryClient.refetchQueries("fetchDataProfile")
+            setIsNewProfile(true)
+        }
+    }
+
+    const onHandleResetValue = () => {
+        setIsNewProfile(false)
+    }
 
     useEffect(() => {
         !isLogin && navigate("/login")
@@ -64,7 +87,10 @@ const Chat = () => {
 
     return(
         <div className="chat flex text-white h-full w-full overflow-hidden">
-            <SideBar />
+            <SideBar 
+                isNewProfile={isNewProfile} 
+                resetValue={onHandleResetValue}
+            />
             <div className="content w-3/4 flex flex-col justify-between poppins tracking-wider px-2">
                 <div className="header flex justify-end h-14 w-full px-4 py-3">
                     <button type="button" className="w-10 h-10 bg-white rounded-full flex justify-center items-center text-black">

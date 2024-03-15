@@ -37,8 +37,10 @@ const ChatMessage = () => {
 
     useEffect(() => {
         refetch()
-        setCurrentChat({})
-    }, [idChat, refetch, setCurrentChat])
+        if(currentChat.isnew == false){
+            setCurrentChat({})
+        }
+    }, [idChat, refetch, setCurrentChat, currentChat])
 
     return(
         <div className="w-4/5 h-full overflow-y-scroll m-auto no-scrollbar" ref={chatContainerRef}>
