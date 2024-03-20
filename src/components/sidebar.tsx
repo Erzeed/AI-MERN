@@ -4,7 +4,9 @@ import { TbSquareRoundedPlus } from "react-icons/tb";
 import ProfileChat from "./profileChat";
 import api from "../utils/api";
 import { useQuery } from "react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useAuthContext } from "../contexts/auth";
+import Modal from "./modal";
 
 type props = {
     isNewProfile: boolean,
@@ -13,15 +15,24 @@ type props = {
 
 const SideBar = ({isNewProfile, resetValue}: props) => {
     const { idChat } = useParams()
+    const { isLogin } = useAuthContext();
+    const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
+    const [nameAction, setNameAction] = useState<string>()
     const navigate = useNavigate()
     const { data: dataProfileChat } = useQuery("fetchDataProfile",
             api.profileChat,
         {
             onError: (error:Error) => {
-                console.log(error)
+                console.log(error.message)
             },
         }
     );
+
+    useEffect(() => {
+        if(isLogin == false) {
+            navigate("/login")
+        }
+    }, [isLogin, navigate])
 
     useEffect(() => {
         if(isNewProfile && dataProfileChat) {
@@ -31,6 +42,11 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
         }
     }, [isNewProfile, dataProfileChat, navigate, resetValue])
 
+    const onHandleOpenModal = (name: string) => {
+        setNameAction(name)
+        isOpenModal ? setIsOpenModal(false) : setIsOpenModal(true)
+    }
+
     return(
         <div className="sidebar w-[290px] bg-[#1e1f26] h-full px-2 py-5">
             <div className="logo w-full flex items-center h-10 border-b border-zinc-600 pb-2">
@@ -39,23 +55,31 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
                 </Link>
                 <h1 className="text-[15px] tracking-wide pl-2">Easy AI</h1>
             </div>
-            <div className="chat-profile relative poppins tracking-wide text-sm font-light mt-10 h-[60%] overflow-y-auto">
-                {dataProfileChat?.map(item => (
-                    <ProfileChat 
-                        id={item._id}
-                        name={item.name}
-                        active={item._id == idChat ? true : false}  
-                    />
-                ))}
-                <div className="nav sticky bottom-0 left-0 z-20 bg-[#1e1f26]">
+            <div className="chat-profile poppins tracking-wide text-sm font-light mt-10 w-full h-[60%]">
+                <div className="content h-full overflow-y-scroll">
+                    {dataProfileChat?.map(item => (
+                        <ProfileChat 
+                            id={item._id}
+                            name={item.name}
+                            active={item._id == idChat ? true : false}  
+                            onHandleOpenModal={onHandleOpenModal}
+                        />
+                    ))}
+                </div>
+                <div className="nav bg-[#1e1f26]">
                     <Link 
                         to="/d" 
-                        className="flex items-center bg-[#282a2c] h-10 text-zinc-300 hover:text-white px-4 rounded-full border-none poppins tracking-wide mt-10 cursor-pointer text-xs font-medium">
+                        className="flex items-center bg-[#282a2c] h-10 text-zinc-300 hover:text-white px-4 rounded-full border-none poppins tracking-wide cursor-pointer text-xs mt-3 font-medium">
                             <TbSquareRoundedPlus className="text-2xl"/>
                             <p className="pl-2">Tambah obrolan</p>
                     </Link>
                 </div>
             </div>
+            <Modal 
+                openModal={isOpenModal}
+                onCloseModal={() => setIsOpenModal(false)}
+                nameAction={nameAction}
+            />
         </div>
     )
 }

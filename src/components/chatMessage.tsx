@@ -37,7 +37,7 @@ const ChatMessage = () => {
 
     useEffect(() => {
         refetch()
-        if(currentChat.isnew == false){
+        if(currentChat?.isnew == false){
             setCurrentChat({})
         }
     }, [idChat, refetch, setCurrentChat, currentChat])

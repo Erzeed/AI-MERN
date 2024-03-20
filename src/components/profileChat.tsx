@@ -9,13 +9,14 @@ import { TypeAnimation } from "react-type-animation";
 type profile = {
     name: string,
     active: boolean,
-    id: number
+    id: number,
+    onHandleOpenModal: (name: string) => void
 }
 
-const ProfileChat = ({name, active, id }: profile) => {
+const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
     const { currentChat } = useAuthContext();
     const [openPopOver, setOpenPopOver] = useState<boolean>(false)
-    const popOverRef = useRef<HTMLAnchorElement | null>(null);
+    const popOverRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -28,37 +29,45 @@ const ProfileChat = ({name, active, id }: profile) => {
             document.removeEventListener("click", handleClickOutside);
         };
     }, []);
-
+    //163, 105
     return(
-        <Link to={`${id}`} ref={popOverRef} className={`${active ? "bg-[#282a2c]" : "hover:bg-[#282a2c]"} relative profilename h-10 w-full rounded-md flex items-center justify-between px-3 mt-1`}>
-            <p className="max-w-[200px] text-zinc-200 tracking-wide truncate overflow-hidden">{
-                currentChat.name !== name ? (
-                    <TypeAnimation
-                        sequence={[name]}
-                        cursor={false}
-                        speed={10}
-                    />
-                ):(
-                    name
-                )
-            }</p>
+        <div className="navlink group flex items-center h-10 w-full relative" ref={popOverRef}>
+            <Link to={`${id}`} className={`${active ? "bg-[#282a2c]" : "group-hover:bg-[#282a2c]"} profilename h-full w-full rounded-l-md flex items-center px-3`}>
+                <p className="max-w-[200px] text-zinc-200 tracking-wide truncate overflow-hidden">{
+                    currentChat?.name !== name ? (
+                        <TypeAnimation
+                            sequence={[name]}
+                            cursor={false}
+                            speed={10}
+                        />
+                    ):(
+                        name
+                    )
+                }</p>
+            </Link>
             <button 
-                className="action z-10 w-12 h-full border-none flex items-center justify-center"
+                className={`${active ? "bg-[#282a2c]" : "group-hover:bg-[#282a2c]"} action z-10 w-12 h-full border-none flex items-center justify-center rounded-r-md`}
                 onClick={() => setOpenPopOver(!openPopOver)}
             >
                 <HiOutlineDotsHorizontal className="text-white text-xl cursor-pointer"/>
             </button>
-            <div className={`${ openPopOver ? "block" : "block"} popup top-1 -right-36 w-32 bg-[#282a2c] text-white z-30 p-2 rounded poppins tracking-wider text-[14px] font-normal`}>
-                <div className="action flex items-center h-10 w-full hover:bg-gray-700 rounded px-2 cursor-pointer">
+            <div className={`${ openPopOver ? "block z-30 h-20 ease-out transition-all duration-500 border border-zinc-700" : "h-0 ease-out transition-all duration-500"} popup -z-30 delay-300 absolute top-4 h-0 right-10 w-32 bg-[#282a2c] text-zinc-300 py-1 rounded poppins tracking-wider text-[14px] font-normal`}>
+                <button 
+                    className="action flex h-9 items-center pl-4 w-full hover:text-white rounded cursor-pointer"
+                    onClick={()=> onHandleOpenModal("rename")}
+                >
                     <VscEdit className="text-base"/>
                     <p className="text-xs ml-3">Edit nama</p>
-                </div>
-                <div className="action flex items-center h-10 hover:bg-slate-700 rounded px-2 cursor-pointer">
+                </button>
+                <button 
+                    className="action flex items-center h-9 pl-4 hover:text-white rounded cursor-pointer"
+                    onClick={()=> onHandleOpenModal("delete")}
+                >
                     <RiDeleteBin5Line className="text-base"/>
                     <p className="text-xs ml-3">Hapus</p>
-                </div>
+                </button>
             </div>
-        </Link>
+        </div>
     )
 }
 

@@ -2,9 +2,9 @@ import SideBar from "../components/sidebar";
 import TextareaAutosize from 'react-textarea-autosize';
 import { useAuthContext } from "../contexts/auth"
 import { IoReturnDownForward } from "react-icons/io5";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NewChatAnimate from "../components/newChatAnimate";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -16,7 +16,6 @@ export type message = {
 
 const Chat = () => {
     const { userData, 
-            isLogin, 
             setCurrentChat, 
             setLoading, 
             Loading} = useAuthContext();
@@ -24,7 +23,6 @@ const Chat = () => {
     const [isNewProfile, setIsNewProfile] = useState<boolean>(false)
     const { idChat } = useParams()
     const queryClient = useQueryClient();
-    const navigate = useNavigate()
     
     const mutation = useMutation(api.SendChat, {
         onSuccess: async (data) => {
@@ -56,10 +54,6 @@ const Chat = () => {
         setIsNewProfile(false)
     }
 
-    useEffect(() => {
-        !isLogin && navigate("/login")
-    }, [isLogin, navigate])
-
 
     const onHandleChangeInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInputPromp(event.target.value)
@@ -86,7 +80,7 @@ const Chat = () => {
     };
 
     return(
-        <div className="chat flex text-white h-full w-full overflow-hidden">
+        <div className="chat flex text-white h-full w-full">
             <SideBar 
                 isNewProfile={isNewProfile} 
                 resetValue={onHandleResetValue}

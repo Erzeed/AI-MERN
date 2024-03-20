@@ -31,7 +31,7 @@ const NewChatAnimate = ({username}: props) => {
         <div className="welcome text-[56px] w-4/5 mx-auto">
             <h1 className="text-zinc-500">{getWelcomeText()}</h1>
             <TypeAnimation
-                sequence={[ 1000, `${username}`, 1000, "Apa yang bisa saya bantu ?"]}
+                sequence={[ 1000, `${username ? username : ""}`, 1000, "Apa yang bisa saya bantu ?"]}
                 speed={2}
                 style={typeStyle}
                 repeat={2}

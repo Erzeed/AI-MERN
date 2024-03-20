@@ -39,8 +39,7 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
             }
         });
     }
-    
-    console.log(dataCurrentChat)
+
     useEffect(() => {
         setWidthComponent(width)
     }, [idChat,width]);

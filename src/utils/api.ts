@@ -1,4 +1,5 @@
-import { messageChat } from "../components/chatMessage";
+
+import { message } from "../page/chat";
 import { formLogin, loginRes } from "../page/login";
 import { formRegister } from "../page/register";
 
@@ -81,7 +82,7 @@ const api = (() => {
         }
     }
 
-    async function SendChat(data: messageChat) {
+    async function SendChat(data: message) {
         const resp = await fetch(`${BASE_URL}/chat/gpt`, {
             method: 'POST',
             credentials: "include",
