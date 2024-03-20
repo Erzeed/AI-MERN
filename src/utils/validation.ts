@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { check, ValidationChain, validationResult } from "express-validator";
+import { check, param, ValidationChain, validationResult } from "express-validator";
 
 export const validate = (validations: ValidationChain[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -34,4 +34,9 @@ export const loginValidate = [
 export const chatCompletionValidator = [
     check("role").notEmpty().withMessage("Role  is required"),
     check("content").notEmpty().withMessage("Message  is required"),
+];
+
+export const updateNameChatValidator = [
+    param("id").notEmpty().withMessage("ID is required"),
+    check("name").notEmpty().withMessage("Name  is required"),
 ];
