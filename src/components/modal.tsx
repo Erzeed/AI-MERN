@@ -1,21 +1,60 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useMutation, useQueryClient } from "react-query";
+import api from "../utils/api";
+import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
 
 type props = {
     openModal: boolean,
     onCloseModal: () => void,
     nameAction: string | undefined,
+    idDelChat: string | undefined
 }
 
-const Modal = ({ openModal, onCloseModal, nameAction }: props) => {
-    const [isConfirm, setIsConfirm] = useState<string>()
+const Modal = ({ openModal, onCloseModal, nameAction, idDelChat }: props) => {
+    const [nameChat, setNameChat] = useState<string>("")
+    const queryClient = useQueryClient();
+    const { idChat } = useParams();
+    const navigate = useNavigate()
+
+    const {mutate} = useMutation(api.deleteChat, {
+        onSuccess: async () => {
+            toast.success("Berhasil Dihapus")
+            await queryClient.refetchQueries("fetchDataProfile")
+            onCloseModal()
+            idChat == idDelChat && navigate("/d")
+        },
+        onError: (error) => {
+            console.log(error)
+            toast.error("Gagal menghapus")
+        }
+    })
+
+    const { mutate: updateNameChatMutation } = useMutation(
+        async ({ nameChat, idDelChat }: { nameChat: string, idDelChat: string}) => {
+          // Mutation function
+            await api.updateNameChat(nameChat, idDelChat);
+        },
+        {
+            onSuccess: async () => {
+                toast.success("Berhasil Update Name");
+                await queryClient.refetchQueries("fetchDataProfile");
+                onCloseModal();
+            },
+            onError: (error) => {
+                console.log(error);
+                toast.error("Gagal Update Name");
+            },
+        }
+    );
 
     const onHandleConfirm = () => {
-        console.log(isConfirm)
+        if(nameAction == "delete") {
+            idDelChat && mutate(idDelChat);
+        }else if(nameAction === "rename" && nameChat?.length > 0) {
+            idDelChat && updateNameChatMutation({ nameChat, idDelChat})
+        }
     }
-
-    useEffect(() => {
-        onHandleConfirm()
-    }, [isConfirm])
 
     return(
         <div className={`${
@@ -34,6 +73,7 @@ const Modal = ({ openModal, onCloseModal, nameAction }: props) => {
                                 type="text" 
                                 placeholder="Rename" 
                                 className="w-full h-12 rounded-xl bg-zinc-800 px-3 focus:outline-none text-sm"
+                                onChange={(event) => setNameChat(event.target.value)}
                             />
                         </form>
                     ):(
@@ -50,7 +90,7 @@ const Modal = ({ openModal, onCloseModal, nameAction }: props) => {
                         <button 
                             type="button"
                             className="hover:bg-red-500/20 rounded-full py-1.5 px-4 hover:text-red-500"
-                            onClick={() => setIsConfirm(nameAction == "rename" ? "Edit" : "Hapus")}
+                            onClick={onHandleConfirm}
                         >
                             {nameAction == "rename" ? "Edit" : "Hapus"}
                         </button>

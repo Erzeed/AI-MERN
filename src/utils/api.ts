@@ -125,6 +125,36 @@ const api = (() => {
         return resp.json()
     }
 
+    async function deleteChat(id: string) {
+        const resp = await fetch(`${BASE_URL}/chat/${id}`, {
+            method: "DELETE",
+            credentials: "include",
+        })
+
+        if (!resp.ok) {
+            throw new Error("Gagal menghapus data");
+        }
+        const response = await resp.json()
+        return response;
+    }
+
+    async function updateNameChat(name: string, id: string) {
+        const resp = await fetch(`${BASE_URL}/chat/${id}`, {
+            method: "PATCH",
+            credentials: "include",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({name})
+        })
+
+        if (!resp.ok) {
+            throw new Error("error during update data");
+        }
+
+        return resp.json();
+    }
+
 
     return{
         Register,
@@ -134,7 +164,9 @@ const api = (() => {
         LoginByGoogle,
         SendChat,
         profileChat,
-        fetchChatById
+        fetchChatById,
+        deleteChat,
+        updateNameChat
     }
 })()
 

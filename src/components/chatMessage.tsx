@@ -47,8 +47,9 @@ const ChatMessage = () => {
             {isLoading ? (
                 <Loading />
             ):(
-                dataChat?.chat?.map((item: message) => (
+                dataChat?.chat?.map((item: message, index: number) => (
                     <ChatBuble 
+                        key={index}
                         role={item.role == "user"} 
                         message={item.content} 
                         username={item.role == "user" ? username : "AI"}

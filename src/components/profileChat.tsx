@@ -10,7 +10,7 @@ type profile = {
     name: string,
     active: boolean,
     id: number,
-    onHandleOpenModal: (name: string) => void
+    onHandleOpenModal: (name: string, id: string) => void
 }
 
 const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
@@ -29,7 +29,7 @@ const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
             document.removeEventListener("click", handleClickOutside);
         };
     }, []);
-    //163, 105
+
     return(
         <div className="navlink group flex items-center h-10 w-full relative" ref={popOverRef}>
             <Link to={`${id}`} className={`${active ? "bg-[#282a2c]" : "group-hover:bg-[#282a2c]"} profilename h-full w-full rounded-l-md flex items-center px-3`}>
@@ -54,14 +54,14 @@ const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
             <div className={`${ openPopOver ? "block z-30 h-20 ease-out transition-all duration-500 border border-zinc-700" : "h-0 ease-out transition-all duration-500"} popup -z-30 delay-300 absolute top-4 h-0 right-10 w-32 bg-[#282a2c] text-zinc-300 py-1 rounded poppins tracking-wider text-[14px] font-normal`}>
                 <button 
                     className="action flex h-9 items-center pl-4 w-full hover:text-white rounded cursor-pointer"
-                    onClick={()=> onHandleOpenModal("rename")}
+                    onClick={()=> onHandleOpenModal("rename", String(id))}
                 >
                     <VscEdit className="text-base"/>
                     <p className="text-xs ml-3">Edit nama</p>
                 </button>
                 <button 
                     className="action flex items-center h-9 pl-4 hover:text-white rounded cursor-pointer"
-                    onClick={()=> onHandleOpenModal("delete")}
+                    onClick={()=> onHandleOpenModal("delete", String(id))}
                 >
                     <RiDeleteBin5Line className="text-base"/>
                     <p className="text-xs ml-3">Hapus</p>

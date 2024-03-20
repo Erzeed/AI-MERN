@@ -73,6 +73,7 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
                             messageBlocks.map((block, index) =>
                                     block.type === 'code' ? (
                                         <ChatIsCode  
+                                            key={index}
                                             language={block.language}
                                             code={block.code}
                                             widtComponent={widtComponent}

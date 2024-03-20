@@ -36,7 +36,6 @@ const Chat = () => {
     })
 
     const onHanldeSetCurrentChat = (chat: object[]) => {
-        console.log(chat)
         setCurrentChat({
             isnew: chat.length <= 2 ? true : false,
             ...chat[chat.length - 1]

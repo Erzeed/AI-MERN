@@ -13,12 +13,21 @@ type props = {
     resetValue: () => void
 }
 
+type dataChat = {
+    _id: string,
+    chat: string[],
+    name: string,
+    userId: string
+}
+
 const SideBar = ({isNewProfile, resetValue}: props) => {
     const { idChat } = useParams()
     const { isLogin } = useAuthContext();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false)
     const [nameAction, setNameAction] = useState<string>()
+    const [idDelProfile, setIdDelProfile] = useState<string>()
     const navigate = useNavigate()
+
     const { data: dataProfileChat } = useQuery("fetchDataProfile",
             api.profileChat,
         {
@@ -42,8 +51,9 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
         }
     }, [isNewProfile, dataProfileChat, navigate, resetValue])
 
-    const onHandleOpenModal = (name: string) => {
+    const onHandleOpenModal = (name: string, id: string) => {
         setNameAction(name)
+        setIdDelProfile(id)
         isOpenModal ? setIsOpenModal(false) : setIsOpenModal(true)
     }
 
@@ -57,8 +67,9 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
             </div>
             <div className="chat-profile poppins tracking-wide text-sm font-light mt-10 w-full h-[60%]">
                 <div className="content h-full overflow-y-scroll">
-                    {dataProfileChat?.map(item => (
-                        <ProfileChat 
+                    {dataProfileChat?.map((item: dataChat)=> (
+                        <ProfileChat
+                            key={item._id}
                             id={item._id}
                             name={item.name}
                             active={item._id == idChat ? true : false}  
@@ -79,6 +90,7 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
                 openModal={isOpenModal}
                 onCloseModal={() => setIsOpenModal(false)}
                 nameAction={nameAction}
+                idDelChat={idDelProfile}
             />
         </div>
     )
