@@ -23,7 +23,8 @@ const Chat = () => {
     const [isNewProfile, setIsNewProfile] = useState<boolean>(false)
     const { idChat } = useParams()
     const queryClient = useQueryClient();
-    
+    const avatar = `https://ui-avatars.com/api/?rounded=true&name=${userData?.username}&background=random`
+
     const mutation = useMutation(api.SendChat, {
         onSuccess: async (data) => {
             await queryClient.refetchQueries("fetchChatById")
@@ -87,7 +88,7 @@ const Chat = () => {
             <div className="content w-3/4 flex flex-col justify-between poppins tracking-wider px-2">
                 <div className="header flex justify-end h-14 w-full px-4 py-3">
                     <button type="button" className="w-10 h-10 bg-white rounded-full flex justify-center items-center text-black">
-                        Rz
+                        <img src={avatar} alt={userData?.username} />
                     </button>
                 </div>
                 <div className="content h-full w-full  flex flex-col mb-5 overflow-x-hidden">

@@ -28,7 +28,7 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
     const [idDelProfile, setIdDelProfile] = useState<string>()
     const navigate = useNavigate()
 
-    const { data: dataProfileChat } = useQuery("fetchDataProfile",
+    const { data: dataProfileChat, isLoading } = useQuery("fetchDataProfile",
             api.profileChat,
         {
             onError: (error:Error) => {
@@ -65,17 +65,21 @@ const SideBar = ({isNewProfile, resetValue}: props) => {
                 </Link>
                 <h1 className="text-[15px] tracking-wide pl-2">Easy AI</h1>
             </div>
-            <div className="chat-profile poppins tracking-wide text-sm font-light mt-10 w-full h-[60%]">
+            <div className="chat-profile poppins tracking-wide text-sm font-light mt-10 w-full max-h-[60%]">
                 <div className="content h-full overflow-y-scroll">
-                    {dataProfileChat?.map((item: dataChat)=> (
-                        <ProfileChat
-                            key={item._id}
-                            id={item._id}
-                            name={item.name}
-                            active={item._id == idChat ? true : false}  
-                            onHandleOpenModal={onHandleOpenModal}
-                        />
-                    ))}
+                    {isLoading ? (
+                        <p>loading...</p>
+                    ):(
+                        dataProfileChat?.map((item: dataChat) => (
+                            <ProfileChat
+                                key={item._id}
+                                id={item._id}
+                                name={item.name}
+                                active={item._id == idChat ? true : false}  
+                                onHandleOpenModal={onHandleOpenModal}
+                            />
+                        ))
+                    )}
                 </div>
                 <div className="nav bg-[#1e1f26]">
                     <Link 

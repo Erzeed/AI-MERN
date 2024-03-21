@@ -34,7 +34,7 @@ const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
         <div className="navlink group flex items-center h-10 w-full relative" ref={popOverRef}>
             <Link to={`${id}`} className={`${active ? "bg-[#282a2c]" : "group-hover:bg-[#282a2c]"} profilename h-full w-full rounded-l-md flex items-center px-3`}>
                 <p className="max-w-[200px] text-zinc-200 tracking-wide truncate overflow-hidden">{
-                    currentChat?.name !== name ? (
+                    currentChat?.name == name ? (
                         <TypeAnimation
                             sequence={[name]}
                             cursor={false}

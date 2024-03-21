@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { TypeAnimation } from "react-type-animation";
 import { extractCodeFromString } from "../utils/constant";
 import ChatIsCode from "./chatiscode";
+import { useAuthContext } from "../contexts/auth";
 
 type props = {
     message: string,
@@ -17,11 +18,12 @@ type props = {
 
 const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
     const messageBlocks = extractCodeFromString(message);
+    const { userData } = useAuthContext();
     const widthComponentBuble = useRef<HTMLDivElement>(null);
     const [widtComponent, setWidthComponent] = useState<number>();
     const width = widthComponentBuble.current?.offsetWidth;
     const { idChat } = useParams();
-
+    const avatar = `https://ui-avatars.com/api/?rounded=true&name=${userData?.username}&background=random`
     const renderText = (text:string) => {
         // Regular expression to match text enclosed within backticks
         const regex = /`(.*?)`/g;
@@ -48,7 +50,7 @@ const ChatBuble = ({message, role, username, dataCurrentChat}: props) => {
         <div className={`${ role ? "flex-row-reverse" : ""
             } flex items-start gap-2.5 my-2`}
         >
-            <img className="w-10 h-10 rounded-full" src={logo} alt="Jese image" />
+            <img className="w-10 h-10 rounded-full" src={role ? avatar : logo} alt="image" />
             <div className={`${ role ? "items-end" : "" } flex flex-col gap-1`} >
                 <div className={`${ role ? "flex-row-reverse" : "" } flex items-center mb-1`}>
                     <span className="text-sm text-white tracking-wide">{username}</span>

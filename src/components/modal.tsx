@@ -77,7 +77,7 @@ const Modal = ({ openModal, onCloseModal, nameAction, idDelChat }: props) => {
                             />
                         </form>
                     ):(
-                        <p className="text-sm leading-6 text-zinc-300 tracking-wide">Anda tidak akan melihat percakapan ini lagi di sini. Tindakan ini juga akan menghapus aktivitas terkait seperti perintah, respons, dan masukan dari Aktivitas Aplikasi Anda.</p>
+                        <p className="text-sm leading-6 text-zinc-400 tracking-wide">Anda tidak akan melihat percakapan ini lagi di sini. Tindakan ini juga akan menghapus aktivitas terkait seperti perintah, respons, dan masukan dari Aktivitas Aplikasi Anda.</p>
                     )}
                     <div className="btn flex justify-end text-sm tracking-wide text-purple-800 font-medium">
                         <button 
