@@ -1,6 +1,10 @@
 import { AiFillAppstore } from "react-icons/ai";
 import { PiChatTextBold } from "react-icons/pi";
 import { IoLanguageSharp } from "react-icons/io5";
+import { TbSettings2 } from "react-icons/tb";
+import { TbLogout } from "react-icons/tb";
+import { VscEdit } from "react-icons/vsc";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 export const cardData= [
     {   
@@ -18,6 +22,28 @@ export const cardData= [
         desc: "Go global and connect with user worldwide with our multingual support",
         icons: <IoLanguageSharp style={{ fill: "url(#purple-gradient)" }}/>
     },
+]
+
+export const optionProfile= [
+    {   
+        name: "Setting",
+        icons: <TbSettings2/>
+    },
+    {   
+        name: "Log out",
+        icons: <TbLogout/>
+    }
+]
+
+export const optionProfileChat= [
+    {   
+        name: "Edit name",
+        icons: <VscEdit/>
+    },
+    {   
+        name: "Delete",
+        icons: <RiDeleteBin5Line/>
+    }
 ]
 
 export function extractCodeFromString(message: string) {

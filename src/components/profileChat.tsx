@@ -1,10 +1,11 @@
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { VscEdit } from "react-icons/vsc";
-import { RiDeleteBin5Line } from "react-icons/ri";
+// import { VscEdit } from "react-icons/vsc";
+// import { RiDeleteBin5Line } from "react-icons/ri";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../contexts/auth";
 import { TypeAnimation } from "react-type-animation";
+import PopOver from "./popOver";
 
 type profile = {
     name: string,
@@ -30,6 +31,14 @@ const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
         };
     }, []);
 
+    const onHandleClick = (action: string) => {
+        if(action == "Delete") {
+            onHandleOpenModal("delete", String(id))
+        }else {
+            onHandleOpenModal("rename", String(id))
+        }
+    }
+
     return(
         <div className="navlink group flex items-center h-10 w-full relative" ref={popOverRef}>
             <Link to={`${id}`} className={`${active ? "bg-[#282a2c]" : "group-hover:bg-[#282a2c]"} profilename h-full w-full rounded-l-md flex items-center px-3`}>
@@ -51,22 +60,13 @@ const ProfileChat = ({name, active, id, onHandleOpenModal }: profile) => {
             >
                 <HiOutlineDotsHorizontal className="text-white text-xl cursor-pointer"/>
             </button>
-            <div className={`${ openPopOver ? "block z-30 h-20 ease-out transition-all duration-500 border border-zinc-700" : "h-0 ease-out transition-all duration-500"} popup -z-30 delay-300 absolute top-4 h-0 right-10 w-32 bg-[#282a2c] text-zinc-300 py-1 rounded poppins tracking-wider text-[14px] font-normal`}>
-                <button 
-                    className="action flex h-9 items-center pl-4 w-full hover:text-white rounded cursor-pointer"
-                    onClick={()=> onHandleOpenModal("rename", String(id))}
-                >
-                    <VscEdit className="text-base"/>
-                    <p className="text-xs ml-3">Edit nama</p>
-                </button>
-                <button 
-                    className="action flex items-center h-9 pl-4 hover:text-white rounded cursor-pointer"
-                    onClick={()=> onHandleOpenModal("delete", String(id))}
-                >
-                    <RiDeleteBin5Line className="text-base"/>
-                    <p className="text-xs ml-3">Hapus</p>
-                </button>
-            </div>
+            <PopOver 
+                isOpen={openPopOver}
+                setClose={() => setOpenPopOver(false)}
+                popOverRef={popOverRef}
+                action="chat"
+                onClick={onHandleClick}
+            />
         </div>
     )
 }

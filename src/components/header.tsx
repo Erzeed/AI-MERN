@@ -20,7 +20,7 @@ const Header = () => {
         setUrlLocation(chatRoute)
     }, [pathname])
 
-    const mutation = useMutation(api.SignOut, {
+    const mutation = useMutation("logOut",api.SignOut, {
         onSuccess: async () => {
             await queryClient.invalidateQueries("validateToken")
             toast.success("Sign out succes")

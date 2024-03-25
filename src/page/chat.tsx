@@ -2,11 +2,13 @@ import SideBar from "../components/sidebar";
 import TextareaAutosize from 'react-textarea-autosize';
 import { useAuthContext } from "../contexts/auth"
 import { IoReturnDownForward } from "react-icons/io5";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import NewChatAnimate from "../components/newChatAnimate";
-import { Outlet, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import api from "../utils/api";
 import { useMutation, useQueryClient } from "react-query";
+import PopOver from "../components/popOver";
+import { toast } from "react-toastify";
 
 export type message = {
     idProfile: string|undefined,
@@ -18,12 +20,16 @@ const Chat = () => {
     const { userData, 
             setCurrentChat, 
             setLoading, 
-            Loading} = useAuthContext();
+            Loading,
+            setUserData} = useAuthContext();
     const [inputPromp, setInputPromp] = useState<string>("")
     const [isNewProfile, setIsNewProfile] = useState<boolean>(false)
     const { idChat } = useParams()
     const queryClient = useQueryClient();
+    const popOverRef = useRef<HTMLButtonElement>(null);
+    const [openPopOver, setOpenPopOver] = useState<boolean>(false)
     const avatar = `https://ui-avatars.com/api/?rounded=true&name=${userData?.username}&background=random`
+    const navigate = useNavigate();
 
     const mutation = useMutation(api.SendChat, {
         onSuccess: async (data) => {
@@ -33,6 +39,18 @@ const Chat = () => {
         },
         onError:(error:Error) => {
             console.log(error)
+        }
+    })
+
+    const { mutate: logOut} = useMutation("logOut",api.SignOut, {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries("validateToken")
+            toast.success("Sign out succes")
+            setUserData([])
+            navigate("/login")
+        },
+        onError: (error: Error) => {
+            toast.error(error.message)
         }
     })
 
@@ -79,6 +97,12 @@ const Chat = () => {
         }
     };
 
+    const onHandleClick = async (action: string) => {
+        if(action == "Log out") {
+            logOut()
+        }
+    }
+
     return(
         <div className="chat flex text-white h-full w-full">
             <SideBar 
@@ -86,10 +110,22 @@ const Chat = () => {
                 resetValue={onHandleResetValue}
             />
             <div className="content w-3/4 flex flex-col justify-between poppins tracking-wider px-2">
-                <div className="header flex justify-end h-14 w-full px-4 py-3">
-                    <button type="button" className="w-10 h-10 bg-white rounded-full flex justify-center items-center text-black">
+                <div className="header relative flex justify-end h-14 w-full px-4 py-3">
+                    <button 
+                        type="button" 
+                        className="w-10 h-10 flex justify-center items-center bg-red-500 rounded-full"
+                        onClick={() => setOpenPopOver(!openPopOver)}
+                        ref={popOverRef}
+                    >
                         <img src={avatar} alt={userData?.username} />
                     </button>
+                    <PopOver 
+                        isOpen={openPopOver}
+                        setClose={() => setOpenPopOver(false)}
+                        popOverRef={popOverRef}
+                        onClick={onHandleClick} 
+                        action={"profile"}
+                    />
                 </div>
                 <div className="content h-full w-full  flex flex-col mb-5 overflow-x-hidden">
                     {idChat == undefined ? (

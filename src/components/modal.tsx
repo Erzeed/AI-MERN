@@ -66,7 +66,9 @@ const Modal = ({ openModal, onCloseModal, nameAction, idDelChat }: props) => {
             } content bg-[#202124] w-1/3 h-60 p-5 rounded-2xl transition ease-in-out delay-100 duration-200`}
             >
                 <div className="flex flex-col h-full justify-between font-light">
-                    <h1 className="text-2xl">{nameAction == "rename" ? "Edit Nama ?" : "Hapus chat ?"}</h1>
+                    <div className="judul border-b border-zinc-700 h-10">
+                        <h1 className="text-2xl">{nameAction == "rename" ? "Edit Nama ?" : "Hapus chat ?"}</h1>
+                    </div>
                     {nameAction == "rename" ? (
                         <form>
                             <input 
